@@ -3,7 +3,7 @@ import { checkProject } from "./index.js";
 import { loadConfig } from "./config.js";
 import { renderTerminal } from "./report.js";
 
-const VERSION = "0.1.0-dev.1";
+const VERSION = "0.1.0";
 
 function help() {
   return `NEXUS v${VERSION}
@@ -81,9 +81,16 @@ export async function runCli({ cwd, args }) {
   else if (command === "security") config.engines = { quality: false, performance: false, security: true };
   else if (command !== "check") return { exitCode: 2, stderr: `Unknown command: ${command}\n` };
 
-  const report = await checkProject(target, config);
-  return {
-    exitCode: report.gate.passed ? 0 : 1,
-    stdout: json ? `${JSON.stringify(report, null, 2)}\n` : renderTerminal(report)
-  };
+  try {
+    const report = await checkProject(target, config);
+    return {
+      exitCode: report.gate.passed ? 0 : 1,
+      stdout: json ? `${JSON.stringify(report, null, 2)}\n` : renderTerminal(report),
+    };
+  } catch (error) {
+    return {
+      exitCode: 2,
+      stderr: `${error instanceof Error ? error.message : String(error)}\n`,
+    };
+  }
 }
