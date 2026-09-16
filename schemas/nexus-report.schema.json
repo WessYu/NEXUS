@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wessyu.dev/schemas/nexus-report-v1.json",
+  "$id": "https://raw.githubusercontent.com/WessYu/NEXUS/main/schemas/nexus-report.schema.json",
   "title": "NEXUS Report",
   "type": "object",
   "additionalProperties": false,
