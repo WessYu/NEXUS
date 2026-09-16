@@ -28,13 +28,21 @@ NEXUS does not reimplement engine rules. Each tool remains independently install
 
 ## Status
 
-Current development version: **0.1.0-dev.1**.
+Release version: **0.1.0**.
 
-The orchestrator, schema, strict configuration, fail-closed gate behavior and package CI are implemented. The three-engine integration smoke is green against Component Vault 0.6.0, Velocity 0.3.1 and SPECTER `main`.
+The complete three-engine integration is green against the published npm packages: Component Vault 0.6.0, Velocity 0.3.1 and SPECTER 0.1.1.
 
-The remaining release blocker is distribution: `@wess2001/specter` must receive its first npm publication. After that, NEXUS can move the three engines from optional peers to normal dependencies and cut its first complete meta-package release.
+NEXUS 0.1.0 installs those engines directly. The remaining step for this release line is publishing the validated NEXUS tarball to npm.
 
 See [release readiness](docs/release-readiness.md) for the exact checklist.
+
+## Install
+
+```bash
+npm install -D @wess2001/nexus
+```
+
+The NEXUS package installs the compatible Component Vault, Velocity and SPECTER engines automatically.
 
 ## CLI
 
@@ -130,13 +138,21 @@ NEXUS targets:
 @wess2001/specter
 ```
 
-During the current pre-release line these are optional peers so the orchestrator and individual adapters can be validated independently. The three-engine contract is now proven in CI; the first complete meta-package release should install the compatible engine set directly after `@wess2001/specter` is available from npm.
+NEXUS 0.1.0 pins the validated engine set as normal dependencies:
+
+- `@wess2001/component-vault@0.6.0`
+- `@wess2001/velocity@0.3.1`
+- `@wess2001/specter@0.1.1`
+
+The lockfile and CI both resolve these exact npm artifacts.
 
 ## Development
 
 ```bash
+npm ci
 npm test
-npm run check
+npm run test:integration
+npm run release:check
 npm run pack:check
 ```
 

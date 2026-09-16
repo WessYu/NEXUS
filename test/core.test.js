@@ -95,5 +95,15 @@ test("validates and merges configuration", () => {
 test("rejects unknown or invalid configuration", () => {
   assert.throws(() => validateConfig({ surprise: true }), /Unknown config keys/);
   assert.throws(() => validateConfig({ engines: { quality: "yes" } }), /must be boolean/);
-  assert.throws(() => validateConfig({ gate: { minScores: { performance: 101 } } }), /between 0 and 100/);
+  assert.throws(
+    () => validateConfig({ gate: { minScores: { performance: 101 } } }),
+    /between 0 and 100/,
+  );
+  assert.throws(
+    () =>
+      validateConfig({
+        engines: { quality: false, performance: false, security: false },
+      }),
+    /At least one engine must be enabled/,
+  );
 });

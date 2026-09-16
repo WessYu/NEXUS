@@ -1,0 +1,177 @@
+name: Publish NEXUS
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact @wess2001/nexus version to publish
+        required: true
+        default: 0.1.0
+        type: string
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'release: nexus v'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Use npm with Trusted Publishing support
+        run: npm install --global npm@11.5.1
+
+      - name: Install locked release dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate release identity
+        id: release
+        shell: bash
+        env:
+          REQUESTED_VERSION: ${{ github.event.inputs.version }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          set -euo pipefail
+          package_name=$(node -p "require('./package.json').name")
+          package_version=$(node -p "require('./package.json').version")
+          requested_version="${REQUESTED_VERSION:-$package_version}"
+          test "$requested_version" = "$package_version" || {
+            echo "Requested version $requested_version does not match $package_version" >&2
+            exit 1
+          }
+          if [[ "$EVENT_NAME" == "push" ]] && [[ "$HEAD_MESSAGE" != release: nexus v${package_version}* ]]; then
+            echo "Automatic publish requires a release: nexus v${package_version} commit" >&2
+            exit 1
+          fi
+          echo "name=$package_name" >> "$GITHUB_OUTPUT"
+          echo "version=$package_version" >> "$GITHUB_OUTPUT"
+
+      - name: Check registry state
+        id: registry
+        shell: bash
+        env:
+          PACKAGE: ${{ steps.release.outputs.name }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          set +e
+          output=$(npm view "${PACKAGE}@${VERSION}" version --json 2>&1)
+          status=$?
+          set -e
+          if [[ "$status" -eq 0 ]]; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+          elif grep -Eqi 'E404|No match found for version|is not in this registry|Not Found' <<<"$output"; then
+            echo "already_published=false" >> "$GITHUB_OUTPUT"
+          else
+            printf '%s\n' "$output" >&2
+            exit "$status"
+          fi
+
+      - name: Run release gate
+        run: npm run release:check
+
+      - name: Pack exact artifact
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          npm pack --ignore-scripts --pack-destination artifacts
+          package_file=$(find artifacts -maxdepth 1 -name '*.tgz' -print -quit)
+          test -n "$package_file"
+          test -s "$package_file"
+          tar -tzf "$package_file" | sort > nexus-tarball-files.txt
+          grep -qx 'package/bin/nexus.js' nexus-tarball-files.txt
+          grep -qx 'package/src/index.js' nexus-tarball-files.txt
+          grep -qx 'package/schemas/nexus-report.schema.json' nexus-tarball-files.txt
+          grep -qx 'package/package.json' nexus-tarball-files.txt
+          grep -qx 'package/README.md' nexus-tarball-files.txt
+          grep -qx 'package/LICENSE' nexus-tarball-files.txt
+          if grep -Eq '^package/(node_modules|test|coverage|artifacts)(/|$)' nexus-tarball-files.txt; then
+            echo "NEXUS tarball contains development-only files" >&2
+            exit 1
+          fi
+          echo "package_file=$package_file" >> "$GITHUB_OUTPUT"
+
+      - name: Consume exact tarball outside repository
+        shell: bash
+        env:
+          PACKAGE_FILE: ${{ steps.pack.outputs.package_file }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          package_path="$PWD/$PACKAGE_FILE"
+          temp_dir=$(mktemp -d)
+          cd "$temp_dir"
+          npm init -y >/dev/null
+          npm install --ignore-scripts "$package_path"
+
+          test "$(./node_modules/.bin/nexus version)" = "$VERSION"
+          ./node_modules/.bin/nexus doctor --json > doctor.json
+          node -e "const r=require('./doctor.json'); if(r.engines.length!==3 || r.engines.some(e=>!e.available)) process.exit(1)"
+
+          cat > nexus.config.json <<'JSON'
+          {
+            "engines": {
+              "quality": true,
+              "performance": true,
+              "security": true
+            },
+            "gate": {
+              "failOn": "high",
+              "requireEngines": true,
+              "minScores": {
+                "performance": 80,
+                "security": 80
+              }
+            },
+            "security": {
+              "offline": true,
+              "build": false,
+              "dependencies": false,
+              "runtime": false
+            }
+          }
+          JSON
+
+          ./node_modules/.bin/nexus check "$GITHUB_WORKSPACE/test/fixtures/healthy-project" --config nexus.config.json --json > report.json
+          node -e "const r=require('./report.json'); if(r.status!=='completed'||!r.gate.passed||r.engines.length!==3) process.exit(1)"
+
+      - name: Publish validated tarball
+        if: steps.registry.outputs.already_published != 'true'
+        env:
+          PACKAGE_FILE: ${{ steps.pack.outputs.package_file }}
+        run: npm publish "$PACKAGE_FILE" --access public --provenance
+
+      - name: Verify registry version
+        shell: bash
+        env:
+          PACKAGE: ${{ steps.release.outputs.name }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          for attempt in {1..12}; do
+            published=$(npm view "${PACKAGE}@${VERSION}" version --json 2>/dev/null | tr -d '"' || true)
+            [[ "$published" == "$VERSION" ]] && exit 0
+            sleep 5
+          done
+          echo "Registry did not expose ${PACKAGE}@${VERSION}" >&2
+          exit 1

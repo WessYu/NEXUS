@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.0 - 2026-09-16
+
+- Promoted NEXUS to its first complete release.
+- Added Component Vault 0.6.0, Velocity 0.3.1 and SPECTER 0.1.1 as direct dependencies.
+- Added a reproducible npm lockfile for the validated engine set.
+- Switched three-engine CI from a source-built SPECTER tarball to the published npm package.
+- Added external consumer validation proving that installing only NEXUS installs and executes all three engines.
+- Added fail-closed protection against a configuration with every engine disabled.
+- Added a resolvable canonical URL for the NEXUS report schema.
+- Added release-gate and npm publishing workflows.
+
 All notable changes to NEXUS are documented here.
 
 ## 0.1.0-dev.1 - 2026-09-16

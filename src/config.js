@@ -75,6 +75,10 @@ export function validateConfig(input = {}) {
     security[key] = securityInput[key];
   }
 
+  if (!Object.values(engines).some(Boolean)) {
+    throw new Error("At least one engine must be enabled");
+  }
+
   return {
     engines,
     gate: { failOn, requireEngines, minScores },
