@@ -1,6 +1,6 @@
 {
   "name": "@wess2001/nexus",
-  "version": "0.1.0-dev.1",
+  "version": "0.1.0",
   "description": "One engineering gate for code quality, performance, and application security.",
   "type": "module",
   "bin": {
@@ -23,37 +23,21 @@
   "scripts": {
     "test": "node --test",
     "check:self": "node ./bin/nexus.js doctor --json",
-    "prepublishOnly": "npm run check",
+    "prepublishOnly": "npm run release:check",
     "check": "npm test && node ./bin/nexus.js doctor --json",
     "pack:check": "npm pack --dry-run",
-    "test:integration": "node scripts/integration-smoke.mjs"
+    "test:integration": "node scripts/integration-smoke.mjs",
+    "release:check": "npm test && npm run test:integration && node ./bin/nexus.js doctor --json"
   },
   "engines": {
     "node": ">=20"
-  },
-  "peerDependencies": {
-    "@wess2001/component-vault": ">=0.6.0 <1",
-    "@wess2001/velocity": ">=0.3.1 <1",
-    "@wess2001/specter": ">=0.1.0 <1"
-  },
-  "peerDependenciesMeta": {
-    "@wess2001/component-vault": {
-      "optional": true
-    },
-    "@wess2001/velocity": {
-      "optional": true
-    },
-    "@wess2001/specter": {
-      "optional": true
-    }
   },
   "keywords": [
     "developer-tools",
     "appsec",
     "performance",
     "code-quality",
-    "ci",
-    "sarif"
+    "ci"
   ],
   "license": "MIT",
   "author": "WessYu",
@@ -68,5 +52,10 @@
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "dependencies": {
+    "@wess2001/component-vault": "0.6.0",
+    "@wess2001/velocity": "0.3.1",
+    "@wess2001/specter": "0.1.1"
   }
 }
