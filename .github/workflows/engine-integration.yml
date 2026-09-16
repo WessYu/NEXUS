@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: WessYu/SPECTER
-          ref: feat/active-security
+          ref: main
           path: .tmp/SPECTER
 
       - name: Setup Node.js
