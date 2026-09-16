@@ -21,7 +21,9 @@
   "scripts": {
     "test": "node --test",
     "check:self": "node ./bin/nexus.js doctor --json",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm test",
+    "check": "npm test && node ./bin/nexus.js doctor --json > /dev/null",
+    "pack:check": "npm pack --dry-run"
   },
   "engines": {
     "node": ">=20"
@@ -52,6 +54,14 @@
   ],
   "license": "MIT",
   "author": "WessYu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WessYu/NEXUS.git"
+  },
+  "homepage": "https://github.com/WessYu/NEXUS#readme",
+  "bugs": {
+    "url": "https://github.com/WessYu/NEXUS/issues"
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
