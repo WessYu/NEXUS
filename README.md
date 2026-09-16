@@ -30,7 +30,9 @@ NEXUS does not reimplement engine rules. Each tool remains independently install
 
 Current development version: **0.1.0-dev.1**.
 
-The orchestrator, schema, strict configuration, fail-closed gate behavior and package CI are implemented. The complete meta-package release remains blocked until the public SPECTER package is merged/published and a three-engine integration smoke is green.
+The orchestrator, schema, strict configuration, fail-closed gate behavior and package CI are implemented. The three-engine integration smoke is green against Component Vault 0.6.0, Velocity 0.3.1 and SPECTER `main`.
+
+The remaining release blocker is distribution: `@wess2001/specter` must receive its first npm publication. After that, NEXUS can move the three engines from optional peers to normal dependencies and cut its first complete meta-package release.
 
 See [release readiness](docs/release-readiness.md) for the exact checklist.
 
@@ -128,7 +130,7 @@ NEXUS targets:
 @wess2001/specter
 ```
 
-During the current pre-release line these are optional peers so the orchestrator and individual adapters can be validated independently. The first complete meta-package release should install the compatible engine set directly after all three public package contracts are validated.
+During the current pre-release line these are optional peers so the orchestrator and individual adapters can be validated independently. The three-engine contract is now proven in CI; the first complete meta-package release should install the compatible engine set directly after `@wess2001/specter` is available from npm.
 
 ## Development
 
