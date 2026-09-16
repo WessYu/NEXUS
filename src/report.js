@@ -6,7 +6,7 @@ export function createReport({ target, engines, gate }) {
     schemaVersion: "1",
     generatedAt: new Date().toISOString(),
     target,
-    status: engines.some((x) => x.status === "failed") ? "partial" : "completed",
+    status: engines.some((x) => x.status !== "completed") ? "partial" : "completed",
     summary: severitySummary(findings),
     engines,
     gate

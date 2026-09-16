@@ -62,7 +62,7 @@
       "required": ["engine", "status", "score", "findings", "summary", "errors", "meta"],
       "properties": {
         "engine": { "enum": ["quality", "performance", "security"] },
-        "status": { "enum": ["completed", "unavailable", "failed"] },
+        "status": { "enum": ["completed", "partial", "unavailable", "failed"] },
         "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
         "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
         "summary": { "$ref": "#/$defs/severitySummary" },

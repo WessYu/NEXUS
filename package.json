@@ -1,6 +1,6 @@
 {
   "name": "@wess2001/nexus",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0-dev.1",
   "description": "One engineering gate for code quality, performance, and application security.",
   "type": "module",
   "bin": {
@@ -16,12 +16,16 @@
     "docs",
     "nexus.config.example.json",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "scripts": {
     "test": "node --test",
     "check:self": "node ./bin/nexus.js doctor --json",
-    "prepublishOnly": "npm test"
+    "prepublishOnly": "npm run check",
+    "check": "npm test && node ./bin/nexus.js doctor --json",
+    "pack:check": "npm pack --dry-run"
   },
   "engines": {
     "node": ">=20"
@@ -52,6 +56,14 @@
   ],
   "license": "MIT",
   "author": "WessYu",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WessYu/NEXUS.git"
+  },
+  "homepage": "https://github.com/WessYu/NEXUS#readme",
+  "bugs": {
+    "url": "https://github.com/WessYu/NEXUS/issues"
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
