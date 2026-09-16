@@ -1,0 +1,5 @@
+node_modules/
+coverage/
+.nexus/
+*.tgz
+.DS_Store
