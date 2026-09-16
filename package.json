@@ -1,6 +1,6 @@
 {
   "name": "@wess2001/nexus",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0-dev.1",
   "description": "One engineering gate for code quality, performance, and application security.",
   "type": "module",
   "bin": {
