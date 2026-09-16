@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wessyu.dev/schemas/nexus-report-v1.json",
+  "title": "NEXUS Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "target", "status", "summary", "engines", "gate"],
+  "properties": {
+    "schemaVersion": { "const": "1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "target": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["completed", "partial"] },
+    "summary": { "$ref": "#/$defs/severitySummary" },
+    "engines": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/engineResult" }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "reasons"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "severitySummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["info", "low", "medium", "high", "critical"],
+      "properties": {
+        "info": { "type": "integer", "minimum": 0 },
+        "low": { "type": "integer", "minimum": 0 },
+        "medium": { "type": "integer", "minimum": 0 },
+        "high": { "type": "integer", "minimum": 0 },
+        "critical": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["schemaVersion", "engine", "ruleId", "title", "message", "severity"],
+      "properties": {
+        "schemaVersion": { "const": "1" },
+        "engine": { "enum": ["quality", "performance", "security"] },
+        "ruleId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "severity": { "enum": ["info", "low", "medium", "high", "critical"] },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 },
+        "url": { "type": "string" },
+        "remediation": { "type": "string" },
+        "fingerprint": { "type": "string" }
+      }
+    },
+    "engineResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engine", "status", "score", "findings", "summary", "errors", "meta"],
+      "properties": {
+        "engine": { "enum": ["quality", "performance", "security"] },
+        "status": { "enum": ["completed", "unavailable", "failed"] },
+        "score": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+        "summary": { "$ref": "#/$defs/severitySummary" },
+        "errors": { "type": "array", "items": { "type": "string" } },
+        "meta": { "type": "object" }
+      }
+    }
+  }
+}
