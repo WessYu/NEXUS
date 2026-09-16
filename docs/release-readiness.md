@@ -1,39 +1,41 @@
 # Release readiness
 
-NEXUS is ready for a complete public npm release only when all items below are true.
+NEXUS 0.1.0 is technically ready for its first npm publication when the release branch CI is green.
 
 ## Engine contracts
 
 - [x] `@wess2001/component-vault@0.6.0` is available from npm.
 - [x] `@wess2001/velocity@0.3.1` is available from npm.
-- [ ] `@wess2001/specter@0.1.0` is available from npm.
-- [x] The public SPECTER facade installs and runs from an external packed tarball.
-- [x] NEXUS integration CI runs all three engines against a deterministic fixture.
-- [x] The three-engine integration passes against SPECTER `main`.
+- [x] `@wess2001/specter@0.1.1` is available from npm.
+- [x] NEXUS integration CI runs all three published engines against a deterministic fixture.
+- [x] The three engine versions are locked in `package-lock.json`.
 
 ## Package
 
 - [x] CLI and programmatic API are separate from the engines.
-- [x] JSON report schema is versioned.
+- [x] JSON report schema is versioned and has a resolvable canonical ID.
 - [x] Missing or partial engines are represented explicitly.
 - [x] Score thresholds fail closed when a required score cannot be verified.
-- [x] Configuration rejects unknown and invalid policy.
-- [x] The NEXUS tarball installs and runs outside the repository on CI.
-- [ ] Engine packages move from optional peers to normal dependencies for the first complete meta-package release.
-- [ ] NEXUS version is promoted from the development version to the first release version.
-- [ ] Exact NEXUS npm tarball and provenance are validated before publication.
+- [x] Configuration rejects unknown, invalid and no-op engine policy.
+- [x] Engine packages are normal NEXUS dependencies.
+- [x] NEXUS version is promoted to `0.1.0`.
+- [x] CI installs the packed NEXUS tarball outside the repository.
+- [x] Consumer smoke verifies that installing only NEXUS also installs all three engines.
+- [x] Consumer smoke executes a real three-engine `nexus check`.
+- [ ] `@wess2001/nexus@0.1.0` is published to npm.
 
-## Current blocker
+## Release procedure
 
-SPECTER is merged and its public package facade plus trusted-publishing workflow are in `main`. The remaining external step is the first npm publication of `@wess2001/specter@0.1.0`.
+For the first npm publication:
 
-After that publication:
+1. merge the green `release/0.1.0` pull request;
+2. pull `main` locally;
+3. run `npm ci` and `npm run release:check`;
+4. create the exact tarball with `npm pack`;
+5. publish that tarball as public.
 
-1. switch NEXUS three-engine CI from the SPECTER source tarball to the npm package;
-2. move the three engine packages from optional peers to normal dependencies;
-3. run the integration and external-consumer gates again;
-4. promote NEXUS to its first release version and publish the validated tarball.
+After the first package exists in npm, future releases can use GitHub Trusted Publishing with provenance.
 
-## Product claims
+## Product claim
 
-NEXUS can be described today as a tested engineering-gate orchestrator for Component Vault, Velocity and SPECTER. It should be described as a one-command distributable suite only after the three engine packages are installed by the published NEXUS package itself.
+Once the final npm publication succeeds, NEXUS 0.1.0 is a one-command distributable engineering suite that orchestrates code quality/governance, performance and application security without flattening the engines into a fabricated universal score.
