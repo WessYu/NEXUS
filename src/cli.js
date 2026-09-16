@@ -3,7 +3,7 @@ import { checkProject } from "./index.js";
 import { loadConfig } from "./config.js";
 import { renderTerminal } from "./report.js";
 
-const VERSION = "0.1.0-dev.0";
+const VERSION = "0.1.0-dev.1";
 
 function help() {
   return `NEXUS v${VERSION}
@@ -51,15 +51,6 @@ async function doctor(cwd, json) {
     } catch (error) {
       results.push({ engine, package: packageName, available: false, reason: error?.code === "ERR_MODULE_NOT_FOUND" ? "not installed" : error.message });
     }
-  }
-  if (!results.find((x) => x.engine === "security")?.available) {
-    try {
-      await import("@specter-security/cli");
-      const item = results.find((x) => x.engine === "security");
-      item.available = true;
-      item.package = "@specter-security/cli";
-      delete item.reason;
-    } catch {}
   }
   const body = { cwd: path.resolve(cwd), node: process.version, engines: results };
   return json ? `${JSON.stringify(body, null, 2)}\n` : `${results.map((x) => `${x.available ? "✓" : "-"} ${x.engine}: ${x.package}${x.reason ? ` (${x.reason})` : ""}`).join("\n")}\n`;
