@@ -25,7 +25,8 @@
     "check:self": "node ./bin/nexus.js doctor --json",
     "prepublishOnly": "npm run check",
     "check": "npm test && node ./bin/nexus.js doctor --json",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "test:integration": "node scripts/integration-smoke.mjs"
   },
   "engines": {
     "node": ">=20"

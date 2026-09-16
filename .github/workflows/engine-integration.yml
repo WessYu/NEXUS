@@ -1,0 +1,53 @@
+name: Three-engine integration
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout NEXUS
+        uses: actions/checkout@v4
+
+      - name: Checkout SPECTER integration source
+        uses: actions/checkout@v4
+        with:
+          repository: WessYu/SPECTER
+          ref: main
+          path: .tmp/SPECTER
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.17.1 --activate
+
+      - name: Build public SPECTER tarball
+        run: |
+          pnpm --dir .tmp/SPECTER install --frozen-lockfile
+          pnpm --dir .tmp/SPECTER --filter @wess2001/specter... build
+          mkdir -p .tmp/specter-pack
+          pnpm --dir .tmp/SPECTER --filter @wess2001/specter pack --pack-destination "$GITHUB_WORKSPACE/.tmp/specter-pack"
+
+      - name: Install all three engines
+        run: |
+          npm install --no-save \
+            @wess2001/component-vault@0.6.0 \
+            @wess2001/velocity@0.3.1 \
+            ./.tmp/specter-pack/*.tgz
+
+      - name: Run NEXUS integration smoke
+        run: npm run test:integration
