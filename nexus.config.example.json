@@ -1,0 +1,21 @@
+{
+  "engines": {
+    "quality": true,
+    "performance": true,
+    "security": true
+  },
+  "gate": {
+    "failOn": "high",
+    "requireEngines": true,
+    "minScores": {
+      "performance": 80,
+      "security": 85
+    }
+  },
+  "security": {
+    "offline": false,
+    "build": true,
+    "dependencies": true,
+    "runtime": false
+  }
+}
