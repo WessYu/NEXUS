@@ -32,7 +32,7 @@ Release version: **0.1.0**.
 
 The complete three-engine integration is green against the published npm packages: Component Vault 0.6.0, Velocity 0.3.1 and SPECTER 0.1.1.
 
-NEXUS 0.1.0 installs those engines directly. The remaining step for this release line is publishing the validated NEXUS tarball to npm.
+NEXUS 0.1.0 installs those engines directly and is now published to npm as `@wess2001/nexus@0.1.0`.
 
 See [release readiness](docs/release-readiness.md) for the exact checklist.
 

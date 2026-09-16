@@ -1,6 +1,6 @@
 # Release readiness
 
-NEXUS 0.1.0 is technically ready for its first npm publication when the release branch CI is green.
+NEXUS 0.1.0 has completed its first npm release.
 
 ## Engine contracts
 
@@ -22,19 +22,13 @@ NEXUS 0.1.0 is technically ready for its first npm publication when the release 
 - [x] CI installs the packed NEXUS tarball outside the repository.
 - [x] Consumer smoke verifies that installing only NEXUS also installs all three engines.
 - [x] Consumer smoke executes a real three-engine `nexus check`.
-- [ ] `@wess2001/nexus@0.1.0` is published to npm.
+- [x] `@wess2001/nexus@0.1.0` is published to npm.
 
 ## Release procedure
 
-For the first npm publication:
+The first manual npm publication is complete.
 
-1. merge the green `release/0.1.0` pull request;
-2. pull `main` locally;
-3. run `npm ci` and `npm run release:check`;
-4. create the exact tarball with `npm pack`;
-5. publish that tarball as public.
-
-After the first package exists in npm, future releases can use GitHub Trusted Publishing with provenance.
+Future releases can use the existing GitHub Trusted Publishing workflow with provenance after the npm package is configured to trust this repository/workflow.
 
 ## Product claim
 
