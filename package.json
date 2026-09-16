@@ -21,8 +21,8 @@
   "scripts": {
     "test": "node --test",
     "check:self": "node ./bin/nexus.js doctor --json",
-    "prepublishOnly": "npm test",
-    "check": "npm test && node ./bin/nexus.js doctor --json > /dev/null",
+    "prepublishOnly": "npm run check",
+    "check": "npm test && node ./bin/nexus.js doctor --json",
     "pack:check": "npm pack --dry-run"
   },
   "engines": {
