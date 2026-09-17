@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./assets/icon.svg" alt="NEXUS" width="96" />
+
 # NEXUS
 
 **One engineering gate for code quality, performance, and application security.**
