@@ -42,22 +42,19 @@ Then run:
 npx nexus check .
 ```
 
-## What it looks like
+## Real CLI demo
 
-```text
-NEXUS
-Quality · Performance · Security
+<p align="center">
+  <a href="https://github.com/WessYu/NEXUS/actions/runs/35852913755">
+    <img src="https://raw.githubusercontent.com/WessYu/WESSYU-ARQUIVO/main/public/projects/nexus/proof.gif" alt="Real NEXUS CLI execution running quality, performance and security engines" width="100%" />
+  </a>
+</p>
 
-Target: ./my-project
+This is an **actual terminal recording** captured from the GitHub Actions runner while NEXUS executes its three-engine gate against the deterministic fixture.
 
-✓ quality       completed
-✓ performance   completed
-✓ security      completed
+**Observed in this run:** quality completed · performance 100/100 · security 100/100 · engineering gate passed.
 
-CRITICAL 0  HIGH 0
-
-✓ ENGINEERING GATE PASSED
-```
+[View the exact CI run that produced this recording →](https://github.com/WessYu/NEXUS/actions/runs/35852913755)
 
 For CI or other tooling:
 
